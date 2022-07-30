@@ -1,0 +1,52 @@
+import { FlightDTO } from './dto/flight.dto';
+import { FlightService } from './flight.service';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  Put,
+  Delete,
+  HttpException,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
+import { MessagePattern, Payload } from '@nestjs/microservices';
+import { FlightMSG } from '../common/constants';
+import { PayloadDTO } from './dto/payloadDTO';
+
+@Controller()
+export class FlightController {
+  constructor(private readonly flightService: FlightService) {}
+
+  @MessagePattern(FlightMSG.CREATE)
+  create(@Payload() flightDTO: FlightDTO) {
+    return this.flightService.create(flightDTO);
+  }
+
+  @MessagePattern(FlightMSG.FIND_ALL)
+  findAll() {
+    return this.flightService.findAll();
+  }
+
+  @MessagePattern(FlightMSG.FIND_ONE)
+  findOne(@Payload() id: string) {
+    return this.flightService.findOne(id);
+  }
+
+  @MessagePattern(FlightMSG.UPDATE)
+  update(@Payload()  flightDTO: FlightDTO) {
+    return this.flightService.update(flightDTO.id, flightDTO);
+  }
+
+  @MessagePattern(FlightMSG.DELETE)
+  delete(@Payload() id: string) {
+    return this.flightService.delete(id);
+  }
+
+  @MessagePattern(FlightMSG.ADD_PASSENGER)
+  addPassenger(@Payload() {flighId, passengerId}:PayloadDTO  ) {
+    return this.flightService.addPassenger(flighId, passengerId);
+  }
+}
